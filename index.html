@@ -31,9 +31,12 @@
                 canvasElement.appendTo('body');
 
                 setInterval(function() {
-                  update();
                   draw();
                 }, 1000/FPS);
+
+                setInterval(function() {
+                  update();
+                }, tempo_ms);
 
 
         </script>
