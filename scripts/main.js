@@ -1,24 +1,32 @@
-var textX = 50;
-var textY = 50;
+
+
 var lasttime = 0;
 var dt = 0;
+var tempo_ms = Math.floor((Math.random() * 292) + 375)//DELAY IN MS between sounds.
+var nextExpected = 0;
+
+
 function update() {
-    textX += 1;
-    textY += 1;
+    var d = new Date();
+    var t = d.getTime();
+    if(t >= nextExpected) {
+        nextExpected = nextExpected + tempo_ms;
+        Sound.play("kickmeaty");
+    }
 }
 function draw() {
-    canvas.fillStyle = "#ff0";
     canvas.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
     canvas.fillStyle = "#000"; // Set color to black
-    canvas.fillText("Sup Bro!", 50, 50);
-
-
-    canvas.fillText(""+dt, 50, 75);
+    canvas.fillText(tempo_ms, 50, 50);
+    canvas.fillText(dt, 50, 75);
 }
 
 $(function() {
   window.keydown = {};
-
+    var d = new Date();
+    var t = d.getTime();
+    nextExpected = t;
+    nextExpected = nextExpected + tempo_ms;
   function keyName(event) {
     return jQuery.hotkeys.specialKeys[event.which] ||
       String.fromCharCode(event.which).toLowerCase();
