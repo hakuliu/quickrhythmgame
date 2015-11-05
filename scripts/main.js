@@ -1,23 +1,38 @@
 
-var tempo_ms = Math.floor((Math.random() * 292) + 375)//DELAY IN MS between sounds.
+var tempo_ms = 500;//Math.floor((Math.random() * 292) + 375)//DELAY IN MS between sounds.
 var nextExpected = 0;
 var totalscore = 0;
 var lastSoundTime;//used in case you've really messed up.
+var beatdiv = Math.floor((Math.random() * 6)+1);
+var beattype = Math.floor((Math.random() * 3));
+var typelut = ["lowkick", "mediumtone", "highclick"];
+var currentbeat = 0;
 
 function update() {
     t = getTimeMS();
     lastSoundTime = t;
     nextExpected = lastSoundTime + tempo_ms;
-    //if(isSeeding() || testDone()) {
-        Sound.play("kickmeaty");
-    //}
+    if(isSeeding() || testDone()) {
+
+        if(beatdiv > 1 && currentbeat % beatdiv == 0) {
+            Sound.play(getBeatType()+"/major");
+        } else {
+            Sound.play(getBeatType()+"/minor");
+        }
+
+    }
+    currentbeat++;
 }
 function draw() {
     canvas.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
     canvas.fillStyle = "#000"; // Set color to black
-    canvas.fillText("Tempo is: " + tempo_ms, 50, 50);
+    tempo_tempo = Math.round((1000.0/tempo_ms)*60);//beats per minute like normal music.
+
+    canvas.fillText("Tempo is: " + tempo_tempo, 50, 25);
+    canvas.fillText("beat division is: " + beatdiv, 50, 50);
+    canvas.fillText("beat type is: " + getBeatType(), 50, 75);
     canvas.fillText("Sound Ending in..." + (numstarter - startervar), 50, 100);
-    canvas.fillText("Score: "+totalscore, 50, 125);
+    canvas.fillText("Score: "+Math.round(totalscore), 50, 125);
 }
 
 
@@ -74,6 +89,10 @@ function isSeeding() {
 var numtests = 20;
 function testDone() {
     return currenttest >= numtests;
+}
+function getBeatType() {
+    type = typelut[beattype];
+    return type;
 }
 
 $(function() {
