@@ -5,10 +5,12 @@ var totalscore = 0;
 var lastSoundTime;//used in case you've really messed up.
 
 function update() {
-    lastSoundTime = getTimeMS();
-    if(isSeeding() || testDone()) {
+    t = getTimeMS();
+    lastSoundTime = t;
+    nextExpected = lastSoundTime + tempo_ms;
+    //if(isSeeding() || testDone()) {
         Sound.play("kickmeaty");
-    }
+    //}
 }
 function draw() {
     canvas.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
@@ -21,15 +23,13 @@ function draw() {
 
 var currenttest = 0;
 function respondKey() {
-    t = getTimeMS();
-    difftest = Math.abs(t - nextExpected);
+    difftest = Math.abs(getScore());
     console.log("difftest: " + difftest);
     if(isSeeding()) {
         doSeedingBehavior(difftest);
     } else {
         doTest(difftest);
     }
-    setNextExpected(difftest);
 }
 function doSeedingBehavior(difftest) {
 var starterthresh = 60;//ms
@@ -42,20 +42,23 @@ var starterthresh = 60;//ms
 function doTest(difftest) {
     currenttest++;
     if(currenttest <= numtests && difftest <= tempo_ms) {
-        ratio = parseFloat(difftest) / parseFloat(tempo_ms);
+        ratio = parseFloat(difftest) / parseFloat(tempo_ms/2.0);
         score = 1 - ratio;
         score = score * (1000.0/numtests);
         totalscore = totalscore + score;
         console.log("test " + currenttest + " score " + difftest + ", " + score);
     }
 }
-function setNextExpected(diff) {
-    if(diff > tempo_ms) {
-        //you were REALLY off, so we go by the last sound time.
-        nextExpected = tempo_ms + lastSoundTime;
+function getScore() {
+    t = getTimeMS();
+    mid = tempo_ms/2.0;
+    tempscore = t - lastSoundTime;
+    if(tempscore >= mid) {
+        console.log("from expected");
+        return nextExpected - t;
     } else {
-        //you weren't that off, so we increment.
-        nextExpected = nextExpected + tempo_ms;
+        console.log("from last")
+        return tempscore;
     }
 }
 function getTimeMS() {
