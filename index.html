@@ -19,6 +19,11 @@
     </head>
 
     <body>
+        <p>tempo: <input type="text" id="tempo" value=""/></p>
+        <p>division: <input type="text" id="division" value=""/></p>
+        <p>sound: <input type="text" id="soundtype" value=""/></p>
+        <button onclick="restart()">restart</button>
+        <canvas width="480" height="320"></canvas>
         <script type='text/javascript'>
               //<![CDATA[
                 var CANVAS_WIDTH = 480;
@@ -33,10 +38,6 @@
                 setInterval(function() {
                   draw();
                 }, 1000/FPS);
-
-                setInterval(function() {
-                  update();
-                }, tempo_ms);
 
 
         </script>

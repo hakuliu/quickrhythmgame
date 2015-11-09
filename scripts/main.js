@@ -97,21 +97,44 @@ function getBeatType() {
 
 $(function() {
   window.keydown = {};
-    var d = new Date();
-    var t = d.getTime();
-    nextExpected = t;
-    nextExpected = nextExpected + tempo_ms;
-  function keyName(event) {
-    return jQuery.hotkeys.specialKeys[event.which] ||
-      String.fromCharCode(event.which).toLowerCase();
-  }
-
+  setInitVal();
   $(document).bind("keydown", function(event) {
-    keydown[keyName(event)] = true;
     respondKey();
   });
 
   $(document).bind("keyup", function(event) {
-    keydown[keyName(event)] = false;
   });
 });
+
+var intervalID;
+function parsevals() {
+    tempo = parseInt(document.getElementById('tempo').value);
+    tempo_ms = (60.0/tempo)*1000;
+
+    beatdiv = parseInt(document.getElementById('division').value);
+
+    beattype = document.getElementById('soundtype').value
+}
+function resetTestVars() {
+    currentbeat = 0;
+    totalscore = 0;
+    startervar = 0;
+    currenttest = 0;
+}
+function restart() {
+    parsevals();
+
+    resetTestVars();
+
+    clearInterval(intervalID);
+
+    intervalID = setInterval(function() {
+                  update();
+                }, tempo_ms);
+}
+
+function setInitVal() {
+    document.getElementById('tempo').value = Math.round((1000.0/tempo_ms)*60);
+    document.getElementById('division').value = beatdiv;
+    document.getElementById('soundtype').value = beattype;
+}
