@@ -47,7 +47,7 @@ function respondKey() {
     }
 }
 function doSeedingBehavior(difftest) {
-var starterthresh = 60;//ms
+var starterthresh = 160;//ms
     if(difftest < starterthresh) {
             startervar++;
         } else {
