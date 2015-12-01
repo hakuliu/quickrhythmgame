@@ -7,6 +7,7 @@ var beatdiv = Math.floor((Math.random() * 6)+1);
 var beattype = Math.floor((Math.random() * 3));
 var typelut = ["lowkick", "mediumtone", "highclick"];
 var currentbeat = 0;
+var lastPressed = 0;
 
 function update() {
     t = getTimeMS();
@@ -38,13 +39,16 @@ function draw() {
 
 var currenttest = 0;
 function respondKey() {
-    difftest = Math.abs(getScore());
-    console.log("difftest: " + difftest);
+    t = getTimeMS();
+
     if(isSeeding()) {
+        difftest = Math.abs(getScore(t));
+        console.log("difftest: " + difftest);
         doSeedingBehavior(difftest);
     } else {
-        doTest(difftest);
+        doTest(t);
     }
+    lastPressed = t;
 }
 function doSeedingBehavior(difftest) {
 var starterthresh = 160;//ms
@@ -54,18 +58,36 @@ var starterthresh = 160;//ms
             startervar = 0;
         }
 }
-function doTest(difftest) {
+function doTest(time) {
     currenttest++;
-    if(currenttest <= numtests && difftest <= tempo_ms) {
-        ratio = parseFloat(difftest) / parseFloat(tempo_ms/2.0);
-        score = 1 - ratio;
-        score = score * (1000.0/numtests);
+    if(currenttest <= numtests) {
+        ratio = getScore2(time);
+        score = ratio * (1000.0/numtests);
         totalscore = totalscore + score;
         console.log("test " + currenttest + " score " + difftest + ", " + score);
     }
 }
-function getScore() {
-    t = getTimeMS();
+//returns from 0 to 1.
+function getScore2(t) {
+    var nextfrompressed = lastPressed + tempo_ms;
+    var halftemp = tempo_ms/2.0;
+    var leftmin = nextfrompressed - halftemp;
+    var rightmin = nextfrompressed + halftemp;
+    if(t <= nextfrompressed) {
+        var x = t - leftmin;
+        var slope = 1.0/halftemp;
+        var rv = Math.max(0, x*slope);
+        console.log('before optimal, rv is ' + rv);
+        return rv;
+    } else {
+        var x = t - rightmin;
+        var slope = -1.0/halftemp;
+        var rv = Math.max(0, x*slope);
+        console.log('after optimal, rv is ' + rv);
+        return rv;
+    }
+}
+function getScore(t) {
     mid = tempo_ms/2.0;
     tempscore = t - lastSoundTime;
     if(tempscore >= mid) {
